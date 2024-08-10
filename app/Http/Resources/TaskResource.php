@@ -22,14 +22,13 @@ class TaskResource extends JsonResource
             'description' => $this->description,
             'status' => $this->status,
             'due_date' => $this->due_date,
-            'completed_at' => $this->completed_at,
+            'completed_at' => Carbon::parse($this->completed_at)->diffForHumans(),
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
             'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(), 
             'assignTo_id' => $this->user_id,
             'assignBy_id' => $this->assignBy_id,
             // 'priority_id' => $this->priority_id,
             'priority' => PriorityResource::make($this->whenLoaded('priority')),
-            // 'priority' => PriorityResource::make($this->whenLoaded('priority')),
         ];
     }
 }

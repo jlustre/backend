@@ -16,12 +16,14 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return TaskResource::collection(Task::with('priority')->get());
+        $tasks = Task::with('priority')->get();
+        if($tasks->count() > 0){
+            return TaskResource::collection($tasks);
+        } else {
+            return response()->json(['message' => 'No tasks found'], 201);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     /**
      * Store a newly created resource in storage.
      */
@@ -29,7 +31,11 @@ class TaskController extends Controller
     {
         $task = Task::create($request->validated());
         $task->load(['priority']);
-        return new TaskResource($task);
+        
+        return response()->json([
+            'message' => 'Task created successfully', 
+            'data' => new TaskResource($task)
+        ], 200);
     }
 
     /**
@@ -39,16 +45,20 @@ class TaskController extends Controller
     {
         $task->load(['priority']);
         return new TaskResource($task);
+        
     }
 
-        /**
+     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
         $task->update($request->validated());
         $task->load(['priority']);
-        return new TaskResource($task);
+        return response()->json([
+            'message' => 'Task updated successfully', 
+            'data' => new TaskResource($task)
+        ], 200);
     }
 
     /**
@@ -57,6 +67,9 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
-        return response()->noContent();
+        // return response()->noContent();
+        return response()->json([
+            'message' => 'Task deleted successfully', 
+        ], 200);
     }
 }
