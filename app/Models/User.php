@@ -3,21 +3,27 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
+use Laravel\Jetstream\Rules\Role;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    use HasRoles;
     use SoftDeletes;
 
     /**
@@ -27,6 +33,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'sponsor',
         'email',
         'password',
@@ -66,13 +73,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function tasks()
+    public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasMany(Task::class);
-    }
-
-    public function profile()
-    {
-        return $this->hasOne(Profile::class);
+        // return str_ends_with($this->email, '@efgsteps.com') && $this->hasVerifiedEmail();
+        return $this->hasRole(['admin', 'superadmin']) && $this->hasVerifiedEmail();
     }
 }

@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -14,89 +13,21 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->unsignedBigInteger('sponsor_id')->nullable();
+            $table->string('name');
+            $table->string('username')->unique();
+            $table->tinyInteger('sponsor_id')->default(1);
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->tinyInteger('rank_id')->default(1);
+            $table->boolean('isOnline')->default(false);
+            $table->string('last_ip_address', 45)->nullable();  
+            $table->rememberToken();
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
-            $table->boolean('active_status')->default(1);
-            $table->integer('role_id')->default(1);
-            $table->integer('rank_id')->default(1);
-            $table->boolean('is_online')->default(0);
-            $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();
         });
-
-        DB::table('users')->insert([
-            [
-                'name' => 'admin1',
-                'sponsor_id' => 0,
-                'email' => 'admin1@efgsteps.com', 
-                'password' => bcrypt('password'), 
-                'role_id' => 3,
-                'rank_id' => 3,
-                'active_status' => 1,
-                'is_online' => 0,
-                'created_at' => now(),
-                'updated_at' => now(),
-                'email_verified_at' => now(),
-            ],
-            [
-                'name' => 'admin2',
-                'sponsor_id' => 1,
-                'email' => 'admin2@efgsteps.com', 
-                'password' => bcrypt('password'), 
-                'role_id' => 3,
-                'rank_id' => 2,
-                'active_status' => 1,
-                'is_online' => 0,
-                'created_at' => now(),
-                'updated_at' => now(),
-                'email_verified_at' => now(),
-            ],
-            [
-                'name' => 'user1',
-                'sponsor_id' => 2,
-                'email' => 'user1@efgsteps.com', 
-                'password' => bcrypt('password'), 
-                'role_id' => 1,
-                'rank_id' => 1,
-                'active_status' => 1,
-                'is_online' => 0,
-                'created_at' => now(),
-                'updated_at' => now(),
-                'email_verified_at' => now(),
-            ],
-            [
-                'name' => 'user2',
-                'sponsor_id' => 3,
-                'email' => 'user2@efgsteps.com', 
-                'password' => bcrypt('password'), 
-                'role_id' => 1,
-                'rank_id' => 1,
-                'active_status' => 1,
-                'is_online' => 0,
-                'created_at' => now(),
-                'updated_at' => now(),
-                'email_verified_at' => now(),
-            ],
-            [
-                'name' => 'user3',
-                'sponsor_id' => 3,
-                'email' => 'user3@efgsteps.com', 
-                'password' => bcrypt('password'), 
-                'role_id' => 1,
-                'rank_id' => 1,
-                'active_status' => 1,
-                'is_online' => 0,
-                'created_at' => now(),
-                'updated_at' => now(),
-                'email_verified_at' => now(),
-            ],
-        ]);
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

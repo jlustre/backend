@@ -16,7 +16,20 @@ class UserFactory extends Factory
 {
     /**
      * The current password being used by the factory.
-     */
+     */ 
+    private function generateUsername()
+    {
+        // Generate a random string
+        $username = Str::random(10);
+
+        // Convert to lowercase and remove spaces (if any)
+        $username = strtolower($username);
+        
+        // Ensure it is up to 15 characters long
+        $username = substr($username, 0, 15);
+
+        return $username;
+    }
     protected static ?string $password;
 
     /**
@@ -27,19 +40,17 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => Str::lower(Str::random(12)),
+            'name' => fake()->name(),
+            'username' => $this->generateUsername(),
             'sponsor_id' => $this->faker->randomElement([1, 2, 3, 4, 5]),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('12345678'),
+            'password' => static::$password ??= Hash::make('password'),
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
-            'rank_id' => $this->faker->randomElement([1, 2, 3]),
-            'created_at' => now(),
-            'updated_at' => now(),
         ];
     }
 
